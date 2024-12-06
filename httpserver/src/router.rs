@@ -8,7 +8,6 @@ pub struct Router;
 
 impl Router {
     pub fn route(req: HttpRequest, stream: &mut impl Write) -> () {
-        println!("{:?}", req);
         match req.method {
             httprequest::HttpMethod::Uninitialized => match &req.resource {
                 Resource::Path(s) => {
