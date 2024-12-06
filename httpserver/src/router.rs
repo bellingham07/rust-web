@@ -10,18 +10,15 @@ impl Router {
     pub fn route(req: HttpRequest, stream: &mut impl Write) -> () {
         println!("{:?}", req);
         match req.method {
-            httprequest::HttpMethod::Get => match &req.resource {
+            httprequest::HttpMethod::Uninitialized => match &req.resource {
                 Resource::Path(s) => {
                     let route: Vec<&str> = s.split('/').collect();
-                    println!("route: {:?}", route);
                     match route[1] {
                         "api" => {
-                            println!("api");
                             let resp: HttpResponse = WebServiceHandler::handle(&req);
                             let _ = resp.send_response(stream);
                         }
                         _ => {
-                            println!("________api____________");
                             let resp: HttpResponse = StaticPageHandler::handle(&req);
                             let _ = resp.send_response(stream);
                         }
@@ -29,8 +26,6 @@ impl Router {
                 }
             },
             _ => {
-                println!("________apiqwe____________");
-
                 let resp: HttpResponse = PageNotFoundHandler::handle(&req);
                 let _ = resp.send_response(stream);
             }
