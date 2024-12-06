@@ -10,11 +10,8 @@ pub trait Handler {
         let default_path = format!("{}/public", env!("CARGO_MANIFEST_DIR"));
         let public_path = env::var("PUBLIC_PATH").unwrap_or(default_path);
         let full_path = format!("{}/{}", public_path, file_name);
-        println!("{full_path}");
 
         let contents = fs::read_to_string(full_path);
-        println!("contents:{:?}", contents);
-        // println!("contents ok:{:?}", contents.ok());
         contents.ok()
     }
 }
@@ -22,16 +19,12 @@ pub trait Handler {
 pub struct StaticPageHandler;
 impl Handler for StaticPageHandler {
     fn handle(req: &HttpRequest) -> HttpResponse {
-        println!("1");
         let http::httprequest::Resource::Path(s) = &req.resource;
-        println!("1");
 
         let route: Vec<&str> = s.split('/').collect();
-        println!("1");
 
         match route[1] {
             "" => {
-                println!("1.1");
                 HttpResponse::new("200", None, Self::load_file("index.html"))
             }
             "health" => HttpResponse::new("200", None, Self::load_file("health.html")),
@@ -57,7 +50,6 @@ pub struct PageNotFoundHandler;
 
 impl Handler for PageNotFoundHandler {
     fn handle(req: &HttpRequest) -> HttpResponse {
-        println!("404");
         HttpResponse::new("404", None, Self::load_file("404.html"))
     }
 }
@@ -95,6 +87,6 @@ impl Handler for WebServiceHandler {
 #[derive(Serialize, Deserialize)]
 pub struct OrderStatus {
     order_id: i32,
-    order_date: i32,
+    order_date: String
     order_status: String,
 }
