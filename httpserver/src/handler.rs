@@ -87,6 +87,6 @@ impl Handler for WebServiceHandler {
 #[derive(Serialize, Deserialize)]
 pub struct OrderStatus {
     order_id: i32,
-    order_date: String
+    order_date: String,
     order_status: String,
 }
