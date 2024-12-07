@@ -1,8 +1,8 @@
-use std::{env, fs};
-use std::collections::HashMap;
-use serde::{Deserialize, Serialize};
 use http::httprequest::HttpRequest;
 use http::httpresponse::HttpResponse;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::{env, fs};
 
 pub trait Handler {
     fn handle(req: &HttpRequest) -> HttpResponse;
@@ -24,9 +24,7 @@ impl Handler for StaticPageHandler {
         let route: Vec<&str> = s.split('/').collect();
 
         match route[1] {
-            "" => {
-                HttpResponse::new("200", None, Self::load_file("index.html"))
-            }
+            "" => HttpResponse::new("200", None, Self::load_file("index.html")),
             "health" => HttpResponse::new("200", None, Self::load_file("health.html")),
             path => match Self::load_file(path) {
                 Some(contents) => {
@@ -40,8 +38,8 @@ impl Handler for StaticPageHandler {
                     }
                     HttpResponse::new("200", Some(map), Some(contents))
                 }
-                None => HttpResponse::new("404", None, Self::load_file("404.html"))
-            }
+                None => HttpResponse::new("404", None, Self::load_file("404.html")),
+            },
         }
     }
 }
@@ -59,7 +57,7 @@ impl WebServiceHandler {
     fn load_json() -> Vec<OrderStatus> {
         let default_path = format!("{}/data", env!("CARGO_MANIFEST_DIR"));
         let data_path = env::var("DATA_PATH").unwrap_or(default_path);
-        let full_path = format!("{}/{}", data_path, "order.json");
+        let full_path = format!("{}/{}", data_path, "orders.json");
         let json_content = fs::read_to_string(full_path);
         let orders: Vec<OrderStatus> =
             serde_json::from_str(json_content.unwrap().as_str()).unwrap();
