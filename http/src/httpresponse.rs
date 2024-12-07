@@ -74,8 +74,7 @@ impl<'a> HttpResponse<'a> {
     pub fn send_response(&self, write_stream: &mut impl Write) -> Result<(), io::Error> {
         let res = self.clone();
         let response_string = String::from(res);
-        let _ = write!(write_stream, "{}", response_string);
-
+        write!(write_stream, "{}", response_string).expect("write failed");
         Ok(())
     }
 
@@ -116,15 +115,15 @@ mod tests {
     fn test_response_struct_creation_200() {
         let response = HttpResponse::new("200", None, Some("text".into()));
         let response_expected = HttpResponse {
-            version:"http/1.1",
-            status_code:"200",
-            status_text:"ok",
-            headers:{
-                let mut h=HashMap::new();
-                h.insert("Content-Type","text/html");
+            version: "http/1.1",
+            status_code: "200",
+            status_text: "ok",
+            headers: {
+                let mut h = HashMap::new();
+                h.insert("Content-Type", "text/html");
                 Some(h)
             },
-            body:Some("text".into()),
+            body: Some("text".into()),
         };
         assert_eq!(response, response_expected);
     }
@@ -133,34 +132,34 @@ mod tests {
     fn test_response_struct_creation_404() {
         let response = HttpResponse::new("404", None, Some("text".into()));
         let response_expected = HttpResponse {
-            version:"http/1.1",
-            status_code:"404",
-            status_text:"not found",
-            headers:{
-                let mut h=HashMap::new();
-                h.insert("Content-Type","text/html");
+            version: "http/1.1",
+            status_code: "404",
+            status_text: "not found",
+            headers: {
+                let mut h = HashMap::new();
+                h.insert("Content-Type", "text/html");
                 Some(h)
             },
-            body:Some("text".into()),
+            body: Some("text".into()),
         };
         assert_eq!(response, response_expected);
     }
 
     #[test]
     fn test_http_response_creation() {
-        let response_expected=HttpResponse{
-            version:"http/1.1",
-            status_code:"404",
-            status_text:"not found",
-            headers:{
-                let mut h=HashMap::new();
-                h.insert("Content-Type","text/html");
+        let response_expected = HttpResponse {
+            version: "http/1.1",
+            status_code: "404",
+            status_text: "not found",
+            headers: {
+                let mut h = HashMap::new();
+                h.insert("Content-Type", "text/html");
                 Some(h)
             },
-            body:Some("text".into()),
+            body: Some("text".into()),
         };
-        let http_string:String=response_expected.into();
-        let actual_string="http/1.1 404 not found\r\nContent-Type:text/html\r\nContent-Length: 4\r\n\r\ntext";
+        let http_string: String = response_expected.into();
+        let actual_string = "http/1.1 404 not found\r\nContent-Type:text/html\r\nContent-Length: 4\r\n\r\ntext";
         assert_eq!(http_string, actual_string);
     }
 }

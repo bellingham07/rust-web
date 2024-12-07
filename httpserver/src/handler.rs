@@ -3,15 +3,20 @@ use http::httpresponse::HttpResponse;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::{env, fs};
+use std::path::Path;
 
 pub trait Handler {
     fn handle(req: &HttpRequest) -> HttpResponse;
     fn load_file(file_name: &str) -> Option<String> {
         let default_path = format!("{}/public", env!("CARGO_MANIFEST_DIR"));
         let public_path = env::var("PUBLIC_PATH").unwrap_or(default_path);
-        let full_path = format!("{}/{}", public_path, file_name);
 
+        // 使用 Path 来构造路径，以确保跨平台兼容
+        let full_path = Path::new(&public_path).join(file_name);
+
+        // 读取文件
         let contents = fs::read_to_string(full_path);
+
         contents.ok()
     }
 }
